@@ -1,77 +1,27 @@
-dockerize
+template
 =============
 
-Utility to simplify running applications in docker containers.
+Cut down version of Jason WIlder's 'dockerize' go program that only includes the template writing functionality.
+See [A Simple Way To Dockerize Applications](http://jasonwilder.com/blog/2014/10/13/a-simple-way-to-template-applications/)
+Please explore dockerize, and only use this version if you decide, like me, that you want simpler functionality.
 
-dockerize is a utility to simplify running applications in docker containers.  It allows you
-to generate application configuration files at container startup time from templates and
-container environment variables.  It also allows log files to be tailed to stdout and/or
-stderr.
+The point is not to force the running of an executable and therefore all of exec functionality and log tailing
+has been removed.
 
-The typical use case for dockerize is when you have an application that has one or more
+
+The typical use case for template is when you have an application that has one or more
 configuration files and you would like to control some of the values using environment variables.
 
 For example, a Python application using Sqlalchemy may be able to use environment variables directly.
 It may require that the database URL be read from a python settings file with a variable named
-`SQLALCHEMY_DATABASE_URI`.  dockerize allows you to set an environment variable such as
+`SQLALCHEMY_DATABASE_URI`.  template allows you to set an environment variable such as
 `DATABASE_URL` and update the python file when the container starts.
 
-Another use case is when the application logs to specific files on the filesystem and not stdout
-or stderr.  This makes it difficult to troubleshoot the container using the `docker logs` command.
-For example, nginx will log to `/var/log/nginx/access.log' and
-'/var/log/nginx/error.log' by default.  While you can sometimes work around this, it's tedious to find
-the a solution for every application.  dockerize allows you to specify which logs files should
-be tailed and where they should be sent.
+###Usage
 
-See [A Simple Way To Dockerize Applications](http://jasonwilder.com/blog/2014/10/13/a-simple-way-to-dockerize-applications/)
+It is intended that this be run from a shell script setting up a container before executing the main service.
 
-## Installation
-
-Download the latest version in your container:
-
-* [linux/amd64](https://github.com/jwilder/dockerize/releases/download/v0.0.2/dockerize-linux-amd64-v0.0.2.tar.gz)
-
-For Ubuntu Images:
-
-```
-RUN apt-get update && apt-get install -y wget
-RUN wget https://github.com/jwilder/dockerize/releases/download/v0.0.2/dockerize-linux-amd64-v0.0.2.tar.gz
-RUN tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.0.2.tar.gz
-```
-
-## Usage
-
-dockerize works by wrapping the call to your application using the `ENTRYPOINT` or `CMD` directives.
-
-This would generate `/etc/nginx/nginx.conf` from the template located at `/etc/nginx/nginx.tmpl` and
-send `/var/log/nginx/access.log' to `STDOUT` and `/var/log/nginx/error.log` to `STDERR` after running
-`nginx`.
-
-```
-CMD dockerize -template /etc/nginx/nginx.tmpl:/etc/nginx/nginx.conf -stdout /var/log/nginx/access.log -stderr /var/log/nginx/error.log nginx
-```
-
-### Command-line Options
-
-You can specify multiple template by passing using `-template` multiple times:
-
-```
-$ dockerize -template template1.tmpl:file1.cfg -template template2.tmpl:file3
-
-```
-
-You can tail multiple files to `STDOUT` and `STDERR` by passing the options multiple times.
-
-```
-$ dockerize -stdout info.log -stdout perf.log
-
-```
-
-If your file uses `{{` and `}}` as part of it's syntax, you can change the template escape characters using the `-delims`.
-
-```
-$ dockerize -delims "<%:%>"
-```
+template /etc/nginx/nginx.tmpl:/etc/nginx/nginx.conf /data/anotherfile.tmpl:/data/anotherfile
 
 ## Using Templates
 
@@ -82,7 +32,7 @@ variables within a template with `.Env`.
 {{ .Env.PATH }} is my path
 ```
 
-There are a few built in functions as well:
+There are a few built in functions from the original 'dockerize':
 
   * `default` - Returns a default value for one that does not exist
   * `contains` - Returns true if a string is within another string

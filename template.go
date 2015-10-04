@@ -73,9 +73,6 @@ func generateFile(templatePath, destPath string) bool {
 		"parseUrl": parseUrl,
 	})
 
-	if len(delims) > 0 {
-		tmpl = tmpl.Delims(delims[0], delims[1])
-	}
 	tmpl, err := tmpl.ParseFiles(templatePath)
 	if err != nil {
 		log.Fatalf("unable to parse template: %s", err)

@@ -1,8 +1,8 @@
 .SILENT :
 .PHONY : template clean fmt
 
-TAG:=`1.0`
-LDFLAGS:=-X main.buildVersion $(TAG)
+TAG:=1.0
+LDFLAGS:=-X main.buildVersion=$(TAG)
 
 all: template
 

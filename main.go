@@ -53,7 +53,7 @@ func main() {
 		log.Fatalln("you must enter a list of templates and files to write")
 	}
 
-	for _, t := range flag.NArg() {
+	for _, t := range flag.Args() {
 		parts := strings.Split(t, ":")
 		if len(parts) != 2 {
 			log.Fatalf("bad template argument: %s. expected \"/template:/dest\"", t)

@@ -25,6 +25,7 @@ func (c *Context) Env() map[string]string {
 var (
 	buildVersion string
 	version      bool
+	verbose	     bool
 
 )
 
@@ -39,7 +40,10 @@ func (s *sliceVar) String() string {
 
 func main() {
 
+	log.SetPrefix("template ")
+
 	flag.BoolVar(&version, "version", false, "show version")
+	flag.BoolVar(&verbose, "verbose", false, "log some detail as to what is happening")
 	//flag.Var(&templatesFlag, "template", "Template (/template:/dest). Can be passed multiple times")
 
 	flag.Parse()
@@ -58,6 +62,7 @@ func main() {
 		if len(parts) != 2 {
 			log.Fatalf("bad template argument: %s. expected \"/template:/dest\"", t)
 		}
+		if verbose { log.Printf("evaluating %s to file %s\n", parts[0], parts[1]) }
 		generateFile(parts[0], parts[1])
 	}
 }
